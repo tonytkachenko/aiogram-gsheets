@@ -28,7 +28,7 @@ spreadsheet_name = get_env_variable('SPREADSHEET_NAME')
 BOT_TOKEN = get_env_variable('BOT_TOKEN')
 
 gc = gspread.service_account(filename=credentials_file)
-worksheet = gc.open(spreadsheet_name).sheet1
+worksheet = gc.open_by_key(spreadsheet_name).sheet1
 
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
@@ -74,7 +74,7 @@ async def input_surname_handler(message: types.Message, state: FSMContext):
         data = worksheet.row_values(cell.row)
 
         pp = data[0]
-        result = data[16]
+        result = data[15]
 
         if pp is None:
             await message.reply("ФИО не найдено в таблице.")
@@ -92,8 +92,7 @@ async def input_surname_handler(message: types.Message, state: FSMContext):
 
         await message.reply_photo(photo=FSInputFile(path=photo_path))
 
-        await message.reply(f"Дорогой друг, поздравляю, ты идёшь в правильном направлении!
-                            Сейчас у тебя: <b>{result}</b> очков опыта")
+        await message.answer(f"Дорогой друг, поздравляю, ты идёшь в правильном направлении!\nСейчас у тебя: <b>{result}</b> очков опыта")
 
         await state.clear()
     except Exception as e:
